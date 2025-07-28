@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>FR Farhan Signal Access</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#00ffcc" />
+  <link rel="icon" href="icon-192.png" type="image/png" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0d0d0d, #1a1a1a);
+      color: #fff;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      overflow: hidden;
+    }
+    /* Login Container */
+    #loginContainer {
+      background-color: #111;
+      padding: 25px;
+      border-radius: 20px;
+      box-shadow: 0 0 30px rgba(0,255,255,0.2);
+      width: 320px;
+      text-align: center;
+    }
+    #loginContainer h2 {
+      margin-bottom: 20px;
+      color: #00ffff;
+    }
+    #loginContainer input[type="email"],
+    #loginContainer input[type="text"],
+    #loginContainer input[type="password"] {
+      width: 90%;
+      padding: 12px;
+      margin: 10px 0;
+      border: none;
+      border-radius: 10px;
+      background-color: #222;
+      color: #fff;
+      font-size: 16px;
+    }
+    #otpBox {
+      background-color: black;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 20px;
+      letter-spacing: 4px;
+      border-radius: 8px;
+      font-weight: bold;
+      border: 1px solid #00ffff;
+      display: none;
+    }
+    #loginContainer button {
+      background-color: #00cccc;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 8px;
+      margin-top: 10px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    #loginContainer .links a {
+      display: block;
+      margin-top: 10px;
+      color: #00ffff;
+      text-decoration: none;
+    }
+    #loginContainer .links a:hover {
+      text-decoration: underline;
+    }
+    #loginContainer .footer {
+      margin-top: 20px;
+      font-size: 12px;
+      color: #888;
+    }
+    /* Signal Container (Initially hidden) */
+    #signalContainer {
+      display: none;
+      width: 100vw;
+      height: 100vh;
+      background: linear-gradient(to bottom right, #000000, #1a1a1a);
+      color: white;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px 10px;
+      overflow-y: auto;
+      position: relative;
+    }
+    #signalContainer h1 {
+      text-shadow: 0 0 10px #00ffcc;
+      margin-bottom: 20px;
+    }
+    #signalContainer input, #signalContainer select, #signalContainer button {
+      padding: 10px;
+      font-size: 16px;
+      border-radius: 10px;
+      margin: 10px auto;
+      display: block;
+      width: 90%;
+      max-width: 400px;
+    }
+    #signalBox {
+      margin-top: 30px;
+      padding: 20px;
+      border-radius: 15px;
+      background: #222;
+      box-shadow: 0 0 15px #00ffcc;
+      display: none;
+      font-size: 18px;
+    }
+    .low { color: red; }
+    .medium { color: yellow; }
+    .high { color: lime; }
+    #confidenceLegend {
+      margin-top: 30px;
+      font-size: 16px;
+    }
+    #confidenceLegend div {
+      margin: 4px;
+    }
+    .market-status {
+      margin-top: 15px;
+      font-size: 16px;
+      color: #00ffcc;
+      font-weight: bold;
+    }
+    option {
+      padding: 6px;
+    }
+    /* Floating signal widget - draggable & small */
+    #floatingSignal {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 250px;
+      background: #222;
+      border: 2px solid #00ffcc;
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 0 15px #00ffcc;
+      color: limegreen;
+      font-weight: bold;
+      font-size: 14px;
+      z-index: 9999;
+      display: none;
+      user-select: none;
+      cursor: move;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Login Page -->
+  <div id="loginContainer">
+    <h2>🔐 Signal Access Login</h2>
+
+    <input type="email" id="email" placeholder="Enter Email" />
+
+    <div id="otpBox" class="otp-box">
+      <div id="otpText">OTP: <span id="otpDisplay"></span></div>
+    </div>
+
+    <input type="text" id="otpInput" placeholder="Enter Code" style="display:none;" />
+
+    <input type="password" id="ownerCode" placeholder="Owner Code" style="display:none;" />
+
+    <button id="sendOtpBtn" onclick="generateOtp()">Send OTP</button>
+    <button id="accessBtn" onclick="verifyAccess()" style="display:none;">Verify Access</button>
+
+    <div class="links">
+      <a href="https://t.me/Farhan8392" target="_blank">📩 Telegram</a>
+      <a href="https://www.tiktok.com/@farhantrader00" target="_blank">🎵 TikTok</a>
+      <a href="https://www.youtube.com/@FRFarhan-999" target="_blank">▶️ YouTube</a>
+    </div>
+
+    <div class="footer">© 2025 FR Farhan</div>
+  </div>
+
+  <!-- Signal Page -->
+  <div id="signalContainer">
+    <h1>📈 FARHAN TRADER SIGNAL BOT</h1>
+
+    <input type="text" id="search" placeholder="🔍 Search Asset..." onkeyup="filterAssets()" />
+
+    <select id="asset">
+      <option value="EUR/USD">🇪🇺/🇺🇸 EUR/USD</option>
+      <option value="USD/JPY">🇺🇸/🇯🇵 USD/JPY</option>
+      <option value="GBP/USD">🇬🇧/🇺🇸 GBP/USD</option>
+      <option value="AUD/USD">🇦🇺/🇺🇸 AUD/USD</option>
+      <option value="NZD/USD">🇳🇿/🇺🇸 NZD/USD</option>
+      <option value="USD/CAD">🇺🇸/🇨🇦 USD/CAD</option>
+      <option value="USD/BRL">🇺🇸/🇧🇷 USD/BRL</option>
+      <option value="USD/CHF">🇺🇸/🇨🇭 USD/CHF</option>
+      <option value="EUR/GBP">🇪🇺/🇬🇧 EUR/GBP</option>
+      <option value="EUR/JPY">🇪🇺/🇯🇵 EUR/JPY</option>
+      <option value="GBP/JPY">🇬🇧/🇯🇵 GBP/JPY</option>
+      <option value="XAU/USD">🥇 Gold (XAU/USD)</option>
+      <option value="XAG/USD">🥈 Silver (XAG/USD)</option>
+      <option value="BTC/USD">₿ Bitcoin (BTC/USD)</option>
+      <option value="ETH/USD">Ξ Ethereum (ETH/USD)</option>
+      <option value="NAS100">📊 Nasdaq 100</option>
+      <option value="SPX500">📊 S&P 500</option>
+      <option value="US30">📊 Dow Jones</option>
+      <option value="CRUDE OIL">🛢️ Crude Oil</option>
+      <option value="USD/INR">🇺🇸/🇮🇳 USD/INR</option>
+      <option value="USD/BDT">🇺🇸/🇧🇩 USD/BDT</option>
+      <option value="VOLATILITY 75">📉 Volatility 75 Index</option>
+      <option value="CRASH 1000">💥 Crash 1000 Index</option>
+      <option value="BOOM 1000">🚀 Boom 1000 Index</option>
+    </select>
+
+    <select id="interval">
+      <option value="5">5 seconds</option>
+      <option value="10">10 seconds</option>
+      <option value="15">15 seconds</option>
+      <option value="30" selected>30 seconds</option>
+      <option value="60">60 seconds</option>
+    </select>
+
+    <div class="market-status" id="marketStatus">Checking market status...</div>
+
+    <button onclick="generateSignal()">🔁 Generate Signal</button>
+
+    <div id="signalBox"></div>
+
+    <div id="confidenceLegend">
+      <div><span class="low">🔴 75% - 84%</span> → Low Confidence (Risky)</div>
+      <div><span class="medium">🟡 85% - 94%</span> → Medium Confidence (Moderate)</div>
+      <div><span class="high">🟢 95% - 98%</span> → High Confidence (Strong)</div>
+    </div>
+
+    <div id="floatingSignal"></div>
+  </div>
+
+<script>
+  let otp = "";
+
+  function generateOtp() {
+    otp = Math.floor(100000 + Math.random() * 900000).toString();
+    document.getElementById("otpDisplay").innerText = otp;
+    document.getElementById("otpBox").style.display = "block";
+    document.getElementById("otpInput").style.display = "block";
+    document.getElementById("ownerCode").style.display = "block";
+    document.getElementById("sendOtpBtn").style.display = "none";
+    document.getElementById("accessBtn").style.display = "inline-block";
+  }
+
+  function verifyAccess() {
+    const userOtp = document.getElementById("otpInput").value.trim();
+    const ownerCodeInput = document.getElementById("ownerCode").value.trim();
+
+    if (userOtp === otp && ownerCodeInput === "592531") {
+      //alert("✅ Access Granted!");  <-- removed this alert
+      document.getElementById("loginContainer").style.display = "none";
+      document.getElementById("signalContainer").style.display = "block";
+    } else {
+      alert("❌ Incorrect OTP or Owner Code.");
+    }
+  }
+
+  // Signal page logic
+  let nextAvailableTime = 0;
+
+  function generateSignal() {
+    const now = Date.now();
+    if (now < nextAvailableTime) return;
+
+    const asset = document.getElementById("asset").value;
+    const directions = ["BUY ↑", "SELL ↓"];
+    const direction = directions[Math.floor(Math.random() * directions.length)];
+    const confidence = Math.floor(Math.random() * 24) + 75;
+    const time = new Date().toLocaleTimeString();
+
+    let confClass = '';
+    if (confidence < 85) confClass = 'low';
+    else if (confidence <= 94) confClass = 'medium';
+    else confClass = 'high';
+
+    const signalHTML = `
+      <div><strong>Signal:</strong> ${asset}</div>
+      <div><strong>Direction:</strong> ${direction}</div>
+      <div><strong>Confidence:</strong> <span class="${confClass}">${confidence}%</span></div>
+      <div><strong>Time:</strong> ${time}</div>
+    `;
+
+    document.getElementById("signalBox").innerHTML = signalHTML;
+    document.getElementById("signalBox").style.display = "block";
+
+    const floatingDiv = document.getElementById("floatingSignal");
+    floatingDiv.innerHTML = signalHTML;
+    floatingDiv.style.display = "block";
+    floatingDiv.style.color = confClass === 'low' ? 'red' : (confClass === 'medium' ? 'yellow' : 'lime');
+
+    const intervalSec = parseInt(document.getElementById("interval").value, 10);
+    nextAvailableTime = now + intervalSec * 1000;
+
+    clearTimeout(window.floatingHideTimeout);
+    window.floatingHideTimeout = setTimeout(() => {
+      floatingDiv.style.display = "none";
+    }, (intervalSec - 1) * 1000);
+  }
+
+  function filterAssets() {
+    const input = document.getElementById("search").value.toUpperCase();
+    const select = document.getElementById("asset");
+    const options = select.getElementsByTagName("option");
+
+    for (let i = 0; i < options.length; i++) {
+      const txt = options[i].textContent || options[i].innerText;
+      options[i].style.display = txt.toUpperCase().includes(input) ? "" : "none";
+    }
+  }
+
+  function updateMarketStatus() {
+    const hour = new Date().getUTCHours();
+    const marketStatus = document.getElementById("marketStatus");
+    if (hour >= 1 && hour <= 20) {
+      marketStatus.textContent = "🟢 REAL MARKET OPEN";
+      marketStatus.style.color = "lime";
+    } else {
+      marketStatus.textContent = "🔴 OTC MARKET (Risky)";
+      marketStatus.style.color = "red";
+    }
+  }
+
+  updateMarketStatus();
+  setInterval(updateMarketStatus, 60000);
+
+  // Dragging support for floatingSignal (mouse + touch)
+  const dragDiv = document.getElementById("floatingSignal");
+  let offsetX, offsetY, isDragging = false;
+
+  dragDiv.addEventListener("mousedown", (e) => {
+    isDragging = true;
+    offsetX = e.clientX - dragDiv.getBoundingClientRect().left;
+    offsetY = e.clientY - dragDiv.getBoundingClientRect().top;
+  });
+
+  document.addEventListener("mousemove", (e) => {
+    if (isDragging) {
+      dragDiv.style.left = (e.clientX - offsetX) + "px";
+      dragDiv.style.top = (e.clientY - offsetY) + "px";
+      dragDiv.style.right = "auto";
+      dragDiv.style.bottom = "auto";
+    }
+  });
+
+  document.addEventListener("mouseup", () => {
+    isDragging = false;
+  });
+
+  dragDiv.addEventListener("touchstart", (e) => {
+    isDragging = true;
+    const touch = e.touches[0];
+    offsetX = touch.clientX - dragDiv.getBoundingClientRect().left;
+    offsetY = touch.clientY - dragDiv.getBoundingClientRect().top;
+  });
+
+  document.addEventListener("touchmove", (e) => {
+    if (isDragging) {
+      const touch = e.touches[0];
+      dragDiv.style.left = (touch.clientX - offsetX) + "px";
+      dragDiv.style.top = (touch.clientY - offsetY) + "px";
+      dragDiv.style.right = "auto";
+      dragDiv.style.bottom = "auto";
+    }
+  });
+
+  document.addEventListener("touchend", () => {
+    isDragging = false;
+  });
+</script>
+</body>
+</html>
